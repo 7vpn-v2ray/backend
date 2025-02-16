@@ -13,7 +13,7 @@ async def init_tables():
         await conn.run_sync(Base.metadata.create_all)
 
 
-app.include_router(user_router, prefix="/users")
+app.include_router(user_router, prefix="/admin")
 
 if __name__ == "__main__":
     uvicorn.run(app)
