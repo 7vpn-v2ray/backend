@@ -4,8 +4,9 @@ from pydantic import BaseModel
 
 
 class userInputModel(BaseModel):
-    username : str
-    password : str
+    username: str
+    password: str
+
 
 class updateUserInfoByUsernameModel(BaseModel):
     username: str
@@ -15,3 +16,8 @@ class updateUserInfoByUsernameModel(BaseModel):
 
     def get_final_password(self) -> str:
         return self.newPassword if self.newPassword is not None else self.password
+
+
+class userLoginModel(BaseModel):
+    username: str
+    password: str
