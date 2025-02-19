@@ -3,11 +3,11 @@ from db.models import User
 import sqlalchemy as sa
 import execptions
 from utils.secrets import passwordManager
-from schema._input import updateUserInfoByUsernameModel, userInputModel, userLoginModel
+from schema._input import updateUserInfoByUsernameModel, userInputModel, adminLoginModel
 from schema.output import registerOutput
 from utils.jwtHandlerClass import JWTHandler,JWTResponsePayload
 
-class UsersOperation:
+class usersOperation:
     def __init__(self, db_session: AsyncSession) -> None:
         self.db_session = db_session
 
@@ -80,16 +80,3 @@ class UsersOperation:
             await session.execute(delete_query)
             await session.commit()
         return True
-
-
-    async def login(self, clientIp : str,data: userLoginModel, route: str = "NOTSET!") -> JWTResponsePayload:
-        username = data.username
-        password = data.password
-
-        userInfo = await self.getUserInfoByUsername(username, password,route)
-        if userInfo is None:
-            raise execptions.userNotFound(route)
-
-        if not passwordManager.verify(password,userInfo.password):
-            raise execptions.userOrPasswordIncorrect(route)
-        return JWTHandler.generate(username=username,client_ip=clientIp)

@@ -5,6 +5,13 @@ class userNotFound(HTTPException):
         self.status_code = 404
         self.detail = f"user not found in {route}"
 
+
+class adminNotFound(HTTPException):
+    def __init__(self, route) -> None:
+        self.status_code = 404
+        self.detail = f"admin not found in {route}"
+
+
 class userExisted(HTTPException):
     def __init__(self, route) -> None:
         self.status_code = 400
