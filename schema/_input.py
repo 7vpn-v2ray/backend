@@ -34,3 +34,9 @@ class updateAdminInfoByUsernameModel(BaseModel):
 
 class userDelete(BaseModel):
     username: str
+
+class newGroupModel(BaseModel):
+    name: str
+    traffic : float
+    multi_login: int
+    relative_expire_date : str
