@@ -1,15 +1,10 @@
-from typing import Any, Coroutine
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db import Admin
-from db.models import User
 import sqlalchemy as sa
 import execptions
-from schema.jwt import JWTResponsePayload
 from utils.secrets import passwordManager
-from schema._input import updateUserInfoByUsernameModel, userInputModel, adminLoginModel, updateAdminInfoByUsernameModel
-from schema.output import registerOutput
+from schema._input import adminLoginModel, updateAdminInfoByUsernameModel
 from utils.jwtHandlerClass import JWTHandler,JWTResponsePayload
 
 
@@ -53,21 +48,6 @@ class adminOperation:
             return JWTHandler.generate(username=update_fields['username'],client_ip=clientIp)
         else:
             return {"status": True}
-
-
-    async def deleteUserByUsername(self, data: userInputModel, route: str = "NOTSET!") -> bool:
-        username = data.username
-        password = data.password
-        userInfo = await self.getUserInfoByUsername(username, password,route)
-        if userInfo is None:
-            raise execptions.userNotFound(route)
-        delete_query = (
-            sa.delete(User).where(User.username == username)
-        )
-        async with self.db_session as session:
-            await session.execute(delete_query)
-            await session.commit()
-        return True
 
 
     async def login(self, clientIp : str, data: adminLoginModel, route: str = "NOTSET!") -> JWTResponsePayload:
