@@ -3,7 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db import Group
 import sqlalchemy as sa
 import execptions
-from schema._input import newGroupModel
+from utils.secrets import passwordManager
+from schema._input import adminLoginModel, updateAdminInfoByUsernameModel, newGroupModel
+from utils.jwtHandlerClass import JWTHandler,JWTResponsePayload
 
 
 class adminGroupsOperations:
@@ -39,6 +41,16 @@ class adminGroupsOperations:
         if groupData is None:
             raise execptions.groupNotFound(route)
         return groupData
+
+    async def deleteGroupByName(self, groupName : str, route: str = "NOTSET!") -> bool:
+        await self.getGroupInfoByName(groupName,route)
+        delete_query = (
+            sa.delete(Group).where(Group.name == groupName)
+        )
+        async with self.db_session as session:
+            await session.execute(delete_query)
+            await session.commit()
+        return True
 
     async def isGroupExist(self,groupName):
         query = sa.select(Group).where(Group.name == groupName)
