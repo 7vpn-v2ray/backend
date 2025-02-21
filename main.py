@@ -16,7 +16,7 @@ async def init_tables():
 
 
 app.include_router(admin_router, prefix="/admin")
-app.include_router(admin_user_routers, prefix="/admin/user")
+# app.include_router(admin_user_routers, prefix="/admin/user")
 app.include_router(admin_groups_router, prefix="/admin/groups")
 
 if __name__ == "__main__":
