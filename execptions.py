@@ -21,3 +21,10 @@ class userOrPasswordIncorrect(HTTPException):
     def __init__(self, route) -> None:
         self.status_code = 400
         self.detail = f"uer or password is incorrect in {route}"
+
+class groupExisted(HTTPException):
+    def __init__(self, route) -> None:
+        self.status_code = 400
+        self.detail = f"group already existed in {route}"
+
+
