@@ -28,3 +28,7 @@ class groupExisted(HTTPException):
         self.detail = f"group already existed in {route}"
 
 
+class groupNotFound(HTTPException):
+    def __init__(self, route) -> None:
+        self.status_code = 400
+        self.detail = f"group not found in {route}"

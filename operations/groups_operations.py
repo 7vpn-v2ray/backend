@@ -32,7 +32,13 @@ class adminGroupsOperations:
             inserted_group = result.fetchone()._asdict()
         return inserted_group['Group']
 
-
+    async def getGroupInfoByName(self, name: str, route: str = "NOTSET!") -> Group:
+        query = sa.select(Group).where(Group.name == name)
+        async with self.db_session as session:
+            groupData = await session.scalar(query)
+        if groupData is None:
+            raise execptions.groupNotFound(route)
+        return groupData
 
     async def isGroupExist(self,groupName):
         query = sa.select(Group).where(Group.name == groupName)
