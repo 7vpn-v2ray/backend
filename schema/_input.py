@@ -40,3 +40,9 @@ class newGroupModel(BaseModel):
     traffic : float
     multi_login: int
     relative_expire_date : str
+
+class updateGroupInfoByNameModel(BaseModel):
+    name: Optional[str] = None
+    traffic: Optional[float] = None
+    multi_login: Optional[int] = None
+    relative_expire_date: Optional[str] = None

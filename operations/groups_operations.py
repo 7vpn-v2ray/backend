@@ -3,17 +3,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from db import Group
 import sqlalchemy as sa
 import execptions
-from utils.secrets import passwordManager
-from schema._input import adminLoginModel, updateAdminInfoByUsernameModel, newGroupModel
-from utils.jwtHandlerClass import JWTHandler,JWTResponsePayload
+from schema._input import newGroupModel, updateGroupInfoByNameModel
 
 
 class adminGroupsOperations:
     def __init__(self, db_session: AsyncSession) -> None:
         self.db_session = db_session
 
-
-    async def createNewGroup(self,data : newGroupModel , route:str = "NOT SET!") -> {}:
+    async def createNewGroup(self, data: newGroupModel, route: str = "NOT SET!") -> {}:
         groupName = data.name
 
         if await self.isGroupExist(groupName):
@@ -42,8 +39,28 @@ class adminGroupsOperations:
             raise execptions.groupNotFound(route)
         return groupData
 
-    async def deleteGroupByName(self, groupName : str, route: str = "NOTSET!") -> bool:
-        await self.getGroupInfoByName(groupName,route)
+    async def updateGroupInfoByName(self, data: updateGroupInfoByNameModel, groupName: str,
+                                    route: str = "NOTSET!") -> {}:
+        await self.getGroupInfoByName(groupName, route)
+
+        update_fields = data.model_dump(exclude_unset=True)
+        print(update_fields)
+        if not update_fields:
+            return {"status": False, "error": "No changes provided"}
+
+        update_query = (
+            sa.update(Group)
+            .where(Group.name == groupName)
+            .values(**update_fields)
+        )
+        async with self.db_session as session:
+            await session.execute(update_query)
+            await session.commit()
+
+        return {"status": True}
+
+    async def deleteGroupByName(self, groupName: str, route: str = "NOTSET!") -> bool:
+        await self.getGroupInfoByName(groupName, route)
         delete_query = (
             sa.delete(Group).where(Group.name == groupName)
         )
@@ -52,7 +69,7 @@ class adminGroupsOperations:
             await session.commit()
         return True
 
-    async def isGroupExist(self,groupName):
+    async def isGroupExist(self, groupName):
         query = sa.select(Group).where(Group.name == groupName)
         async with self.db_session as session:
             user_data = await session.scalar(query)

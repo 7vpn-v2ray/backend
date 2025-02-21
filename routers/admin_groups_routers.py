@@ -5,7 +5,7 @@ from typing import Annotated
 
 from db.engine import get_db
 from operations.groups_operations import adminGroupsOperations
-from schema._input import  updateAdminInfoByUsernameModel, newGroupModel
+from schema._input import newGroupModel, updateGroupInfoByNameModel
 from schema.jwt import JWTPayload
 from utils.jwtHandlerClass import JWTHandler
 
@@ -20,6 +20,12 @@ async def newGroup(db_session: Annotated[AsyncSession, Depends(get_db)],
 
 
 
+@admin_groups_router.post("/update_group")
+async def updateAdminInfo(db_session: Annotated[AsyncSession, Depends(get_db)],
+                          data: updateGroupInfoByNameModel = Body(),
+                          groupName: str = Body(),
+                          tokenData: JWTPayload = Depends(JWTHandler.verify_token)):
+    return await adminGroupsOperations(db_session).updateGroupInfoByName(data,groupName, "/update_group")
 
 
 @admin_groups_router.get("/get_group{group_name}")
