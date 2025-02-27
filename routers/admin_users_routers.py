@@ -17,13 +17,11 @@ async def register(
         db_session: Annotated[AsyncSession, Depends(get_db)],
         auth_token: Annotated[str, Header()],
         request: Request,
+        tokenData: JWTPayload = Depends(JWTHandler.verify_token),
         data: userInputModel = Body(),
 ):
-    JWTHandler.verify_token(request=request, auth_token=auth_token)
-
     user = await usersOperation(db_session).create(
-        username=data.username,
-        password=data.password,
+        data=data,
         route="/new_user"
     )
     return user
@@ -44,19 +42,19 @@ async def deleteUserByUsername(
         auth_token: Annotated[str, Header()],
         request: Request,
         data: userDelete = Body(),
+        tokenData: JWTPayload = Depends(JWTHandler.verify_token)
 ):
     return await usersOperation(db_session).deleteUserByUsername(data.username, "/delete_user")
 
 
-@admin_user_routers.get("/getInfo/{username}{password}")
+@admin_user_routers.get("/getInfo/{username}")
 async def get_info(db_session: Annotated[AsyncSession, Depends(get_db)],
                    auth_token: Annotated[str, Header()],
                    request: Request,
-                   data: userInputModel = Body(),
+                   username: str
                    ):
     user = await usersOperation(db_session).getUserInfoByUsername(
         username=username,
-        password=password,
         route="/getInfo"
     )
     return user

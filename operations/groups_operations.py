@@ -39,6 +39,15 @@ class adminGroupsOperations:
             raise execptions.groupNotFound(route)
         return groupData
 
+    async def getGroupInfoById(self, id: int, route: str = "NOTSET!") -> Group:
+        query = sa.select(Group).where(Group.id == id)
+        async with self.db_session as session:
+            groupData = await session.scalar(query)
+        if groupData is None:
+            raise execptions.groupNotFound(route)
+        return groupData
+
+
     async def updateGroupInfoByName(self, data: updateGroupInfoByNameModel, groupName: str,
                                     route: str = "NOTSET!") -> {}:
         await self.getGroupInfoByName(groupName, route)

@@ -11,8 +11,13 @@ class User(Base):
 
     password: Mapped[str] = mapped_column()
     username: Mapped[str] = mapped_column(unique=True)
+    first_login: Mapped[str] = mapped_column()
+    relative_expire_date: Mapped[str] = mapped_column()
+    traffic: Mapped[float] = mapped_column()
+    multi_login: Mapped[int] = mapped_column()
+    group_id: Mapped[int] = mapped_column()
 
-    id: Mapped[UUID] = mapped_column(primary_key=True, default_factory=uuid4)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True,default_factory=uuid4)
 
 
 class Admin(Base):

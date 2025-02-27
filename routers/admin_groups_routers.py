@@ -34,6 +34,13 @@ async def getGroupInfoByName(db_session: Annotated[AsyncSession, Depends(get_db)
                        tokenData: JWTPayload = Depends(JWTHandler.verify_token)):
     return await adminGroupsOperations(db_session).getGroupInfoByName(groupName, "/get_group")
 
+@admin_groups_router.get("/get_group_by_id{group_id}")
+async def getGroupInfoByName(db_session: Annotated[AsyncSession, Depends(get_db)],
+                       groupId : int,
+                       tokenData: JWTPayload = Depends(JWTHandler.verify_token)):
+    return await adminGroupsOperations(db_session).getGroupInfoById(groupId, "/get_group_by_id")
+
+
 @admin_groups_router.delete("/delete_group{group_name}")
 async def getAdminInfo(db_session: Annotated[AsyncSession, Depends(get_db)],
                        groupName : str,

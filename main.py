@@ -16,9 +16,9 @@ async def init_tables():
 
 
 app.include_router(admin_router, prefix="/admin")
-# app.include_router(admin_user_routers, prefix="/admin/user")
+app.include_router(admin_user_routers, prefix="/admin/users")
 app.include_router(admin_groups_router, prefix="/admin/groups")
 
 if __name__ == "__main__":
     uvicorn.run(app)
-#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDEwMDE3NjksInVzZXJuYW1lIjoiYWRtaW4iLCJpcCI6IjEyNy4wLjAuMSJ9.NdxlyCCLoJSfRzykvvND_VglMHWb8fv24_2H-UiNpGU
+#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDE1MTcwODEsInVzZXJuYW1lIjoiYWRtaW4iLCJpcCI6IjEyNy4wLjAuMSJ9.EQj3DInd-Bd5Ofy641Izdwh-CtNgMTagVnRLVenRKQ4

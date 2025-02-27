@@ -6,6 +6,19 @@ from pydantic import BaseModel
 class userInputModel(BaseModel):
     username: str
     password: str
+    first_login: str = -1
+    relative_expire_date: str = -1
+    traffic: float = -1.0
+    multi_login: int = -1
+    group_id : int
+
+
+class userDetails(BaseModel):
+    group_id : int
+    first_login: str = -1
+    relative_expire_date: str = -1
+    traffic: float = -1.0
+    multi_login: int = -1
 
 
 class updateUserInfoByUsernameModel(BaseModel):

@@ -31,7 +31,6 @@ class JWTHandler:
             )
         try:
             token_data = jwt.decode(auth_token, SECRET_KEY, algorithms=[ALGORITHM])
-            print(token_data)
             if datetime.fromtimestamp(token_data["exp"]) < datetime.now():
                 raise HTTPException(
                     status_code=status.HTTP_401_UNAUTHORIZED,
