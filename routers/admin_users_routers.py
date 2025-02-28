@@ -38,6 +38,15 @@ async def update_username(db_session: Annotated[AsyncSession, Depends(get_db)],
     user = await usersOperation(db_session).updateUserInfoByUsername(data, username, "/update_userinfo_by_username")
     return user
 
+@admin_user_routers.put("/update_userinfo_by_userid/")
+async def update_username(db_session: Annotated[AsyncSession, Depends(get_db)],
+                          auth_token: Annotated[str, Header()],
+                          request: Request,
+                          data: updateUserInfoByUsernameModel = Body(),
+                          user_id :int =Body()
+                          ):
+    user = await usersOperation(db_session).updateUserInfoByUserId(data, user_id, "/update_userinfo_by_userid")
+    return user
 
 @admin_user_routers.delete("/delete_user")
 async def deleteUserByUsername(
