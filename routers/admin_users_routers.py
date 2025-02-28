@@ -1,11 +1,12 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Body, Request, Header
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Annotated
 
-from operations.users_operations import usersOperation
 from db.engine import get_db
-from schema._input import userInputModel, updateUserInfoByUsernameModel, adminLoginModel, userDelete
+from operations.users_operations import usersOperation
+from schema._input import userInputModel, updateUserInfoByUsernameModel, userDelete
 from schema.jwt import JWTPayload
 from utils.jwtHandlerClass import JWTHandler
 
@@ -26,13 +27,15 @@ async def register(
     )
     return user
 
-@admin_user_routers.put("/update_userinfo/")
+
+@admin_user_routers.put("/update_userinfo_by_username/")
 async def update_username(db_session: Annotated[AsyncSession, Depends(get_db)],
                           auth_token: Annotated[str, Header()],
                           request: Request,
                           data: updateUserInfoByUsernameModel = Body(),
+                          username=Body()
                           ):
-    user = await usersOperation(db_session).updateUserInfoByUsername(data, "/update_userinfo")
+    user = await usersOperation(db_session).updateUserInfoByUsername(data, username, "/update_userinfo_by_username")
     return user
 
 
@@ -40,7 +43,6 @@ async def update_username(db_session: Annotated[AsyncSession, Depends(get_db)],
 async def deleteUserByUsername(
         db_session: Annotated[AsyncSession, Depends(get_db)],
         auth_token: Annotated[str, Header()],
-        request: Request,
         data: userDelete = Body(),
         tokenData: JWTPayload = Depends(JWTHandler.verify_token)
 ):
@@ -50,8 +52,8 @@ async def deleteUserByUsername(
 @admin_user_routers.get("/getInfo/{username}")
 async def get_info(db_session: Annotated[AsyncSession, Depends(get_db)],
                    auth_token: Annotated[str, Header()],
-                   request: Request,
-                   username: str
+                   username: str,
+                   tokenData: JWTPayload = Depends(JWTHandler.verify_token)
                    ):
     user = await usersOperation(db_session).getUserInfoByUsername(
         username=username,

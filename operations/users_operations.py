@@ -1,12 +1,11 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from db.models import User
 import sqlalchemy as sa
+from sqlalchemy.ext.asyncio import AsyncSession
+
 import execptions
+from db.models import User
 from operations.groups_operations import adminGroupsOperations
+from schema._input import updateUserInfoByUsernameModel, userInputModel, userDetails
 from utils.secrets import passwordManager
-from schema._input import updateUserInfoByUsernameModel, userInputModel, adminLoginModel, userDetails
-from schema.output import registerOutput
-from utils.jwtHandlerClass import JWTHandler, JWTResponsePayload
 
 
 class usersOperation:
@@ -30,11 +29,10 @@ class usersOperation:
         user_details_dict = user_details.dict() if hasattr(user_details, "dict") else user_details.__dict__
         # Update values from groupInfo if they are "-1"
         updated_values = {
-            key: groupInfo_dict.get(key, value) if (str(value) == "-1" or str(value) == "-1.0") and value in (-1, "-1", -1.0,"-1.0") else value
+            key: groupInfo_dict.get(key, value) if (str(value) == "-1" or str(value) == "-1.0") and value in (
+                -1, "-1", -1.0, "-1.0") else value
             for key, value in user_details_dict.items()
         }
-
-        print(updated_values)
 
         # Set hashed password in the updated values
         updated_values["password"] = passwordManager.hash(password)
@@ -71,27 +69,43 @@ class usersOperation:
                 return False
             return True
 
-    async def updateUserInfoByUsername(self, data: updateUserInfoByUsernameModel, route: str = "NOTSET!") -> None:
-        username = data.username
-        newUsername = data.newUsername
-        password = data.password
-        newPassword = data.get_final_password()
-
-        userInfo = await self.getUserInfoByUsername(username, password, route)
-
-        if userInfo is None:
+    async def updateUserInfoByUsername(self, data: updateUserInfoByUsernameModel, username: str,
+                                       route: str = "NOTSET!") -> {}:
+        if not await self.isUserExist(username):
             raise execptions.userNotFound(route)
-        newUsernameInfo = await self.isUserExist(newUsername)
-        if newUsernameInfo is True and username != newUsername:
-            raise execptions.userExisted(route)
+
+        update_fields = data.model_dump(exclude_unset=True)
+
+        if not update_fields:
+            return {"status": False, "error": "No changes provided"}
+
+        if "password" in update_fields:
+            update_fields["password"] = passwordManager.hash(update_fields.pop("password"))
+
         update_query = (
             sa.update(User)
             .where(User.username == username)
-            .values(username=newUsername, password=passwordManager.hash(newPassword))
+            .values(**update_fields)
         )
         async with self.db_session as session:
             await session.execute(update_query)
             await session.commit()
+
+        # userInfo = await self.getUserInfoByUsername(username, route)
+        #
+        # if userInfo is None:
+        #     raise execptions.userNotFound(route)
+        # newUsernameInfo = await self.isUserExist(newUsername)
+        # if newUsernameInfo is True and username != newUsername:
+        #     raise execptions.userExisted(route)
+        # update_query = (
+        #     sa.update(User)
+        #     .where(User.username == username)
+        #     .values(username=newUsername, password=passwordManager.hash(newPassword))
+        # )
+        # async with self.db_session as session:
+        #     await session.execute(update_query)
+        #     await session.commit()
 
     async def deleteUserByUsername(self, username: str, route: str = "NOTSET!") -> bool:
         if not await self.isUserExist(username):
