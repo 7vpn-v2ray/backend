@@ -6,12 +6,30 @@ from routers.admin_groups_routers import admin_groups_router
 from routers.admin_routers import admin_router
 from routers.admin_users_routers import admin_user_routers
 
+from fastapi.middleware.cors import CORSMiddleware
+
 app = FastAPI(
     title="My API",
     description="API Documentation",
     version="1.0",
     docs_url="/docs",  # مستندات Swagger
 )
+#cors config
+
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 
 @app.on_event("startup")
