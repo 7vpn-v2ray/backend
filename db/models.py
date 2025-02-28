@@ -17,7 +17,7 @@ class User(Base):
     multi_login: Mapped[int] = mapped_column()
     group_id: Mapped[int] = mapped_column()
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True,default_factory=uuid4)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, default_factory=uuid4)
 
 
 class Admin(Base):

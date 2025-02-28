@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+
 class userNotFound(HTTPException):
     def __init__(self, route) -> None:
         self.status_code = 404
@@ -17,10 +18,12 @@ class userExisted(HTTPException):
         self.status_code = 400
         self.detail = f"user already existed in {route}"
 
+
 class userOrPasswordIncorrect(HTTPException):
     def __init__(self, route) -> None:
         self.status_code = 400
         self.detail = f"uer or password is incorrect in {route}"
+
 
 class groupExisted(HTTPException):
     def __init__(self, route) -> None:

@@ -10,11 +10,11 @@ class userInputModel(BaseModel):
     relative_expire_date: str = -1
     traffic: float = -1.0
     multi_login: int = -1
-    group_id : int
+    group_id: int
 
 
 class userDetails(BaseModel):
-    group_id : int
+    group_id: int
     first_login: str = -1
     relative_expire_date: str = -1
     traffic: float = -1.0
@@ -22,10 +22,13 @@ class userDetails(BaseModel):
 
 
 class updateUserInfoByUsernameModel(BaseModel):
-    username: str
-    password: str
-    newUsername: str
-    newPassword: Optional[str] = None
+    username: str = None
+    password: Optional[str] = None
+    first_login: Optional[str] = None
+    relative_expire_date: Optional[str] = None
+    traffic: Optional[float] = None
+    multi_login: Optional[int] = None
+    group_id: Optional[int] = None
 
     def get_final_password(self) -> str:
         return self.newPassword if self.newPassword is not None else self.password
@@ -34,6 +37,7 @@ class updateUserInfoByUsernameModel(BaseModel):
 class adminLoginModel(BaseModel):
     username: str
     password: str
+
 
 class updateAdminInfoByUsernameModel(BaseModel):
     username: Optional[str] = None
@@ -48,11 +52,13 @@ class updateAdminInfoByUsernameModel(BaseModel):
 class userDelete(BaseModel):
     username: str
 
+
 class newGroupModel(BaseModel):
     name: str
-    traffic : float
+    traffic: float
     multi_login: int
-    relative_expire_date : str
+    relative_expire_date: str
+
 
 class updateGroupInfoByNameModel(BaseModel):
     name: Optional[str] = None

@@ -21,4 +21,4 @@ app.include_router(admin_groups_router, prefix="/admin/groups")
 
 if __name__ == "__main__":
     uvicorn.run(app)
-#eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDE1MTcwODEsInVzZXJuYW1lIjoiYWRtaW4iLCJpcCI6IjEyNy4wLjAuMSJ9.EQj3DInd-Bd5Ofy641Izdwh-CtNgMTagVnRLVenRKQ4
+# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDE1MTcwODEsInVzZXJuYW1lIjoiYWRtaW4iLCJpcCI6IjEyNy4wLjAuMSJ9.EQj3DInd-Bd5Ofy641Izdwh-CtNgMTagVnRLVenRKQ4

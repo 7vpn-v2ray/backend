@@ -1,8 +1,8 @@
+import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import Group
-import sqlalchemy as sa
 import execptions
+from db import Group
 from schema._input import newGroupModel, updateGroupInfoByNameModel
 
 
@@ -47,13 +47,11 @@ class adminGroupsOperations:
             raise execptions.groupNotFound(route)
         return groupData
 
-
     async def updateGroupInfoByName(self, data: updateGroupInfoByNameModel, groupName: str,
                                     route: str = "NOTSET!") -> {}:
         await self.getGroupInfoByName(groupName, route)
 
         update_fields = data.model_dump(exclude_unset=True)
-        print(update_fields)
         if not update_fields:
             return {"status": False, "error": "No changes provided"}
 
