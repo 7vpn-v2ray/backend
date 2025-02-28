@@ -6,7 +6,12 @@ from routers.admin_groups_routers import admin_groups_router
 from routers.admin_routers import admin_router
 from routers.admin_users_routers import admin_user_routers
 
-app = FastAPI()
+app = FastAPI(
+    title="My API",
+    description="API Documentation",
+    version="1.0",
+    docs_url="/docs",  # مستندات Swagger
+)
 
 
 @app.on_event("startup")
