@@ -1,5 +1,7 @@
 test.py
 __pycache__/
 *.pyc
-panel.db
+.venv/*
+.idea/*
+.idea
 .venv
