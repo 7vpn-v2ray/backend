@@ -31,21 +31,33 @@ class adminGroupsOperations:
             inserted_group = result.fetchone()._asdict()
         return inserted_group['Group']
 
-    async def getGroupInfoByName(self, name: str, route: str = "NOTSET!") -> Group:
-        query = sa.select(Group).where(Group.name == name)
-        async with self.db_session as session:
-            groupData = await session.scalar(query)
-        if groupData is None:
-            raise execptions.groupNotFound(route)
-        return groupData
+    async def getGroupInfoByName(self, name: str, route: str = "NOTSET!") -> list[Group]:
+        if name is None:
+            query = sa.select(Group)
+        else:
+            query = sa.select(Group).where(Group.name == name)
 
-    async def getGroupInfoById(self, id: int, route: str = "NOTSET!") -> Group:
-        query = sa.select(Group).where(Group.id == id)
         async with self.db_session as session:
-            groupData = await session.scalar(query)
+            groupData = await session.execute(query)
+            groups = groupData.fetchall()
+
+        if not groups:
+            raise execptions.groupNotFound(route)
+
+        return [group._asdict()['Group'] for group in groups]
+
+    async def getGroupInfoById(self, id: int, route: str = "NOTSET!") -> list[Group]:
+        if id is None:
+            query = sa.select(Group)
+        else:
+            query = sa.select(Group).where(Group.id == id)
+        async with self.db_session as session:
+            groupData = await session.execute(query)
+            groups = groupData.fetchall()
+
         if groupData is None:
             raise execptions.groupNotFound(route)
-        return groupData
+        return [group._asdict()['Group'] for group in groups]
 
     async def updateGroupInfoByName(self, data: updateGroupInfoByNameModel, groupName: str,
                                     route: str = "NOTSET!") -> {}:

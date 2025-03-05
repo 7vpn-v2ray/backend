@@ -30,7 +30,7 @@ async def updateAdminInfo(db_session: Annotated[AsyncSession, Depends(get_db)],
 
 @admin_groups_router.get("/get_group{group_name}")
 async def getGroupInfoByName(db_session: Annotated[AsyncSession, Depends(get_db)],
-                             groupName: str,
+                             groupName: str = None,
                              tokenData: JWTPayload = Depends(JWTHandler.verify_token)):
     return await adminGroupsOperations(db_session).getGroupInfoByName(groupName, "/get_group")
 
