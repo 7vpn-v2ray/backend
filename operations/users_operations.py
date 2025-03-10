@@ -1,3 +1,5 @@
+import itertools
+
 import sqlalchemy as sa
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,7 +26,7 @@ class usersOperation:
         user = User(**data.__dict__)  # Initial user object
         user_details = userDetails(**user.__dict__)  # Convert to userDetails model
         groupInfo = await admin_groups_operations.getGroupInfoById(id=user_details.group_id, route=route)
-        groupInfo_dict = groupInfo.__dict__
+        groupInfo_dict = dict(itertools.zip_longest(*[iter(groupInfo)] * 2, fillvalue=""))
 
         user_details_dict = user_details.dict() if hasattr(user_details, "dict") else user_details.__dict__
         # Update values from groupInfo if they are "-1"

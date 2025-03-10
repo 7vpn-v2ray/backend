@@ -24,7 +24,6 @@ class adminGroupsOperations:
                 traffic=data.traffic
             ).returning(Group)
         )
-
         async with self.db_session as session:
             result = await session.execute(insert_query)
             await session.commit()
@@ -32,7 +31,7 @@ class adminGroupsOperations:
         return inserted_group['Group']
 
     async def getGroupInfoByName(self, name: str, route: str = "NOTSET!") -> list[Group]:
-        if name is None:
+        if name is None :
             query = sa.select(Group)
         else:
             query = sa.select(Group).where(Group.name == name)

@@ -58,7 +58,7 @@ async def deleteUserByUsername(
     return await usersOperation(db_session).deleteUserByUsername(data.username, "/delete_user")
 
 
-@admin_user_routers.get("/getInfo/{username}")
+@admin_user_routers.get("/getInfo")
 async def get_info(db_session: Annotated[AsyncSession, Depends(get_db)],
                    auth_token: Annotated[str, Header()],
                    username: str,
