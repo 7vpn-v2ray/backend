@@ -61,7 +61,7 @@ async def deleteUserByUsername(
 @admin_user_routers.get("/getInfo")
 async def get_info(db_session: Annotated[AsyncSession, Depends(get_db)],
                    auth_token: Annotated[str, Header()],
-                   username: str,
+                   username: str=None,
                    tokenData: JWTPayload = Depends(JWTHandler.verify_token)
                    ):
     user = await usersOperation(db_session).getUserInfoByUsername(
