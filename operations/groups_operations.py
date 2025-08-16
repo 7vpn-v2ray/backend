@@ -33,6 +33,8 @@ class adminGroupsOperations:
     async def getGroupInfoByName(self, name: str, route: str = "NOTSET!") -> list[Group]:
         if name is None :
             query = sa.select(Group)
+        elif name is "undefined" or name == "":
+            query = sa.select(Group)
         else:
             query = sa.select(Group).where(Group.name == name)
 
@@ -41,7 +43,8 @@ class adminGroupsOperations:
             groups = groupData.fetchall()
 
         if not groups:
-            raise execptions.groupNotFound(route)
+            # raise execptions.groupNotFound(route)
+            return []
 
         return [group._asdict()['Group'] for group in groups]
 

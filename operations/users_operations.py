@@ -26,7 +26,13 @@ class usersOperation:
         user = User(**data.__dict__)  # Initial user object
         user_details = userDetails(**user.__dict__)  # Convert to userDetails model
         groupInfo = await admin_groups_operations.getGroupInfoById(id=user_details.group_id, route=route)
-        groupInfo_dict = dict(itertools.zip_longest(*[iter(groupInfo)] * 2, fillvalue=""))
+        # groupInfo_dict = dict(itertools.zip_longest(*[iter(groupInfo)] * 2, fillvalue=""))
+        groupInfo = await admin_groups_operations.getGroupInfoById(id=user_details.group_id, route=route)
+        if not groupInfo:
+             raise Exception("Group not found!")
+
+        # فرض بر اینه که groupInfo یه لیست از دیکشنری‌هاست
+        groupInfo_dict = groupInfo[0]
 
         user_details_dict = user_details.dict() if hasattr(user_details, "dict") else user_details.__dict__
         # Update values from groupInfo if they are "-1"
@@ -56,11 +62,18 @@ class usersOperation:
 
     async def getUserInfoByUsername(self, username: str, route: str = "NOTSET!") -> User:
 
-        query = sa.select(User).where(User.username == username)
+        if username is None or username == "undefined" or username == "":
+             query = sa.select(User)
+        else:
+             query = sa.select(User).where(User.username == username)
+
         async with self.db_session as session:
-            user_data = await session.scalar(query)
+              result = await session.execute(query)
+              user_data = result.scalars().first()
+
         if user_data is None:
-            raise execptions.userNotFound(route)
+         raise execptions.userNotFound(route)
+
         return user_data
 
     async def isUserNameExist(self, username: str) -> bool:
