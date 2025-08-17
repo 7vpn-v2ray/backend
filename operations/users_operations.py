@@ -67,9 +67,12 @@ class usersOperation:
         else:
              query = sa.select(User).where(User.username == username)
 
+        print(f"Executing query: {query}")
         async with self.db_session as session:
               result = await session.execute(query)
-              user_data = result.scalars().first()
+              print(f"Executing result: {result}")
+
+              user_data = result.scalars().all()
 
         if user_data is None:
          raise execptions.userNotFound(route)
