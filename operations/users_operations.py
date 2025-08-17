@@ -25,7 +25,6 @@ class usersOperation:
 
         user = User(**data.__dict__)  # Initial user object
         user_details = userDetails(**user.__dict__)  # Convert to userDetails model
-        groupInfo = await admin_groups_operations.getGroupInfoById(id=user_details.group_id, route=route)
         # groupInfo_dict = dict(itertools.zip_longest(*[iter(groupInfo)] * 2, fillvalue=""))
         groupInfo = await admin_groups_operations.getGroupInfoById(id=user_details.group_id, route=route)
         if not groupInfo:
@@ -37,8 +36,9 @@ class usersOperation:
         user_details_dict = user_details.dict() if hasattr(user_details, "dict") else user_details.__dict__
         # Update values from groupInfo if they are "-1"
         updated_values = {
-            key: groupInfo_dict.get(key, value) if (str(value) == "-1" or str(value) == "-1.0") and value in (
-                -1, "-1", -1.0, "-1.0") else value
+            key: getattr(groupInfo_dict, key, value)
+            if value in (None, -1, -1.0, "-1", "-1.0", "")
+            else value
             for key, value in user_details_dict.items()
         }
 
@@ -76,6 +76,30 @@ class usersOperation:
 
         return user_data
 
+    async def getUserInfoByUsernameAndPassword(
+            self,
+            username: str,
+            password: str,
+            route: str = "NOTSET!"
+    ) -> User:
+        if not username or username in ("undefined", ""):
+            raise execptions.userNotFound(route)
+
+        query = sa.select(User).where(User.username == username)
+
+        async with self.db_session as session:
+            result = await session.execute(query)
+            user = result.scalar_one_or_none()
+
+        if not user:
+            raise execptions.userNotFound(route)
+
+        if not passwordManager.verify(password, user.password):
+            raise execptions.invalidCredentials(route)
+
+        user.password = password
+
+        return user
     async def isUserNameExist(self, username: str) -> bool:
         query = sa.select(User).where(User.username == username)
         async with self.db_session as session:

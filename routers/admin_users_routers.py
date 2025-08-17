@@ -69,3 +69,17 @@ async def get_info(db_session: Annotated[AsyncSession, Depends(get_db)],
         route="/getInfo"
     )
     return user
+
+@admin_user_routers.get("/getInfoApp")
+async def get_info(db_session: Annotated[AsyncSession, Depends(get_db)],
+                   auth_token: Annotated[str, Header()],
+                   username: str,
+                   password: str,
+                   tokenData: JWTPayload = Depends(JWTHandler.verify_token)
+                   ):
+    user = await usersOperation(db_session).getUserInfoByUsernameAndPassword(
+        username=username,
+        password=password,
+        route="/getInfoApp"
+    )
+    return user

@@ -6,6 +6,11 @@ class userNotFound(HTTPException):
         self.status_code = 404
         self.detail = f"user not found in {route}"
 
+class invalidCredentials(HTTPException):
+    def __init__(self, route) -> None:
+        self.status_code = 404
+        self.detail = f"combination of user and password is incorrect in {route}"
+
 
 class adminNotFound(HTTPException):
     def __init__(self, route) -> None:
