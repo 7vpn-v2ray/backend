@@ -11,6 +11,7 @@ class userInputModel(BaseModel):
     traffic: float = -1.0
     multi_login: int = -1
     group_id: int
+    group_name: str = -1
 
 
 class userDetails(BaseModel):

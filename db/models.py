@@ -16,6 +16,7 @@ class User(Base):
     traffic: Mapped[float] = mapped_column()
     multi_login: Mapped[int] = mapped_column()
     group_id: Mapped[int] = mapped_column()
+    group_name: Mapped[str] = mapped_column()
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True, default_factory=uuid4)
 

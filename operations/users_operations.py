@@ -45,6 +45,7 @@ class usersOperation:
         # Set hashed password in the updated values
         updated_values["password"] = passwordManager.hash(password)
         updated_values["username"] = username
+        updated_values["group_name"] = groupInfo_dict.name
 
         # Create the final user object with all updated values
         user = userInputModel(**updated_values)
