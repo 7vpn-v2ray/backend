@@ -65,23 +65,22 @@ class usersOperation:
         return inserted_user['User']
 
     async def getUserInfoByUsername(self, username: str, route: str = "NOTSET!") -> User:
-
-        if username is None or username == "undefined" or username == "":
-             query = sa.select(User)
+        if username in (None, "undefined", ""):
+            query = sa.select(User)
         else:
-             query = sa.select(User).where(User.username == username)
+            query = sa.select(User).where(User.username == username)
 
-        print(f"Executing query: {query}")
         async with self.db_session as session:
-              result = await session.execute(query)
-              print(f"Executing result: {result}")
+            result = await session.execute(query)
+            users: User = result.scalars().all()
 
-              user_data = result.scalars().all()
+        if not users:
+            raise execptions.userNotFound(route)
 
-        if user_data is None:
-         raise execptions.userNotFound(route)
+        for user in users:
+            await self.calculateUserExpireDate(user, route)  # in-place
 
-        return user_data
+        return users
 
     async def getUserInfoByUsernameAndPassword(
             self,
@@ -104,6 +103,12 @@ class usersOperation:
         if not passwordManager.verify(password, user.password):
             raise execptions.invalidCredentials(route)
 
+        user = await self.calculateUserExpireDate(user,route)
+        user.password = password
+
+        return user
+
+    async def calculateUserExpireDate(self,user,route="NOTSET"):
         if user.first_login == "-1":
             user.relative_expire_date = "-1"
         else:
@@ -119,8 +124,6 @@ class usersOperation:
 
             except Exception as e:
                 raise execptions.invalidCredentials(f"{route} - Date parse error: {e}")
-        user.password = password
-
         return user
     async def isUserNameExist(self, username: str) -> bool:
         query = sa.select(User).where(User.username == username)
