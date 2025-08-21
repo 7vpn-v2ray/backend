@@ -47,7 +47,18 @@ async def update_username(db_session: Annotated[AsyncSession, Depends(get_db)],
                           ):
     user = await usersOperation(db_session).updateUserInfoByUserId(data, user_id, "/update_userinfo_by_userid")
     return user
-
+@admin_user_routers.put("/used_traffic/")
+async def used_traffic(db_session: Annotated[AsyncSession, Depends(get_db)],
+                   auth_token: Annotated[str, Header()],
+                   username: str,
+                   traffic: float,
+                   tokenData: JWTPayload = Depends(JWTHandler.verify_token)
+                   ):
+    await usersOperation(db_session).used_traffic(
+        username=username,
+        traffic=traffic,
+        route="/usedTraffic"
+    )
 @admin_user_routers.delete("/delete_user")
 async def deleteUserByUsername(
         db_session: Annotated[AsyncSession, Depends(get_db)],
@@ -83,3 +94,4 @@ async def get_info(db_session: Annotated[AsyncSession, Depends(get_db)],
         route="/getInfoApp"
     )
     return user
+

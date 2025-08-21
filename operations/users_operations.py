@@ -65,7 +65,6 @@ class usersOperation:
         return inserted_user['User']
 
     async def getUserInfoByUsername(self, username: str, route: str = "NOTSET!") -> User:
-        print(username)
         if username in (None, "undefined", ""):
             query = sa.select(User)
         else:
@@ -206,4 +205,14 @@ class usersOperation:
         async with self.db_session as session:
             await session.execute(delete_query)
             await session.commit()
+        return True
+    async def used_traffic(self, username: str,traffic : float, route: str = "NOTSET!") -> bool:
+        data = await self.getUserInfoByUsername(username)
+        current_traffic = data[0].traffic
+        new_traffic = current_traffic - traffic
+        if new_traffic <= 0:
+            new_traffic = 0
+        data = {"traffic": new_traffic}
+        data = updateUserInfoByUsernameModel(**data)
+        await self.updateUserInfoByUsername(data=data,username=username,route=route)
         return True
