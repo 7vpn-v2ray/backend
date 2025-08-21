@@ -65,6 +65,7 @@ class usersOperation:
         return inserted_user['User']
 
     async def getUserInfoByUsername(self, username: str, route: str = "NOTSET!") -> User:
+        print(username)
         if username in (None, "undefined", ""):
             query = sa.select(User)
         else:
@@ -75,7 +76,10 @@ class usersOperation:
             users: User = result.scalars().all()
 
         if not users:
-            raise execptions.userNotFound(route)
+            if username is None:
+                users=[]
+            else:
+             raise execptions.userNotFound(route)
 
         for user in users:
             await self.calculateUserExpireDate(user, route)  # in-place
