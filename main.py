@@ -12,13 +12,13 @@ from routers.admin_users_routers import admin_user_routers
 
 # مسیر پوشه build Vite
 # FRONTEND_DIST = os.path.join(os.path.dirname(__file__), "dist")
-FRONTEND_DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), "dist"))
+# FRONTEND_DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), "dist"))
 
-print(">>> FRONTEND_DIST =", FRONTEND_DIST)  # Debug
+# print(">>> FRONTEND_DIST =", FRONTEND_DIST)  # Debug
 
 # Mount کردن assets
-assets_path = os.path.join(FRONTEND_DIST, "assets")
-print(">>> ASSETS PATH =", assets_path)  # Debug
+# assets_path = os.path.join(FRONTEND_DIST, "assets")
+# print(">>> ASSETS PATH =", assets_path)  # Debug
 
 app = FastAPI(
     title="My API",
@@ -45,7 +45,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
+# app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
 
 
 # Database init
@@ -60,13 +60,13 @@ app.include_router(admin_user_routers, prefix="/admin/users")
 app.include_router(admin_groups_router, prefix="/admin/groups")
 
 # --- سرو کردن SPA ---
-@app.get("/", include_in_schema=False)
-def serve_index():
-    return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
-
-@app.get("/{full_path:path}", include_in_schema=False)
-def serve_spa(full_path: str):
-    return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+# @app.get("/", include_in_schema=False)
+# def serve_index():
+#     return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
+#
+# @app.get("/{full_path:path}", include_in_schema=False)
+# def serve_spa(full_path: str):
+#     return FileResponse(os.path.join(FRONTEND_DIST, "index.html"))
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8090)
