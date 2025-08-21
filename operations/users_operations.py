@@ -6,8 +6,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import execptions
 from db.models import User
 from operations.groups_operations import adminGroupsOperations
+from routers.admin_groups_routers import getGroupInfoByName
 from schema._input import updateUserInfoByUsernameModel, userInputModel, userDetails
 from utils.secrets import passwordManager
+from datetime import datetime, timedelta
+
 
 
 class usersOperation:
@@ -101,6 +104,21 @@ class usersOperation:
         if not passwordManager.verify(password, user.password):
             raise execptions.invalidCredentials(route)
 
+        if user.first_login == "-1":
+            user.relative_expire_date = "-1"
+        else:
+            try:
+                first_login_date = datetime.strptime(user.first_login, "%Y-%m-%d")
+
+                group_data = await getGroupInfoByName(db_session=self.db_session,groupId=user.group_id)
+                days_to_add = int(group_data[0].relative_expire_date)
+
+                expire_date = first_login_date + timedelta(days=days_to_add)
+
+                user.relative_expire_date = expire_date.strftime("%Y-%m-%d")
+
+            except Exception as e:
+                raise execptions.invalidCredentials(f"{route} - Date parse error: {e}")
         user.password = password
 
         return user
