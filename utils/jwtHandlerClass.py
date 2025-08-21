@@ -10,14 +10,14 @@ from settings import ACCESS_TOKEN_EXPIRE_MINUTES, ALGORITHM, SECRET_KEY
 
 class JWTHandler:
     @staticmethod
-    def generate(username: str, client_ip: str, exp_timestamp: int | None = None) -> JWTResponsePayload:
+    def generate(username: str, client_ip: str, exp_timestamp: int or None = None) -> JWTResponsePayload:
         expire_time = ACCESS_TOKEN_EXPIRE_MINUTES
         expires_delta = datetime.now(timezone.utc) + timedelta(minutes=expire_time)
 
         to_encode = {
             "exp": exp_timestamp if exp_timestamp else int(expires_delta.timestamp()),
             "username": username,
-            "ip": client_ip,
+            # "ip": client_ip,
         }
         encoded_jwt = jwt.encode(to_encode, SECRET_KEY, ALGORITHM)
         return JWTResponsePayload(access=encoded_jwt)
@@ -38,15 +38,15 @@ class JWTHandler:
                     headers={"WWW-Authenticate": "Bearer"},
                 )
 
-            token_ip = token_data.get("ip")
-
-            client_ip = request.client.host
-
-            if token_ip != client_ip:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Invalid IP address",
-                )
+            # token_ip = token_data.get("ip")
+            #
+            # client_ip = request.client.host
+            #
+            # if token_ip != client_ip:
+            #     raise HTTPException(
+            #         status_code=status.HTTP_403_FORBIDDEN,
+            #         detail="Invalid IP address",
+            #     )
 
         except jwt.exceptions.PyJWTError:
             raise HTTPException(

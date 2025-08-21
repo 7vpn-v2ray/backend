@@ -8,4 +8,3 @@ class JWTResponsePayload(BaseModel):
 class JWTPayload(BaseModel):
     exp: int
     username: str
-    ip: str
