@@ -45,6 +45,7 @@ class usersOperation:
             for key, value in user_details_dict.items()
         }
 
+        updated_values['relative_expire_date'] = "-1"
         # Set hashed password in the updated values
         updated_values["password"] = passwordManager.hash(password)
         updated_values["username"] = username
@@ -155,6 +156,8 @@ class usersOperation:
             raise execptions.userExisted(route)
 
         update_fields = data.model_dump(exclude_unset=True)
+        user_old_data = await self.getUserInfoByUsername(username, route)
+        user_old_data = user_old_data[0]
 
         if not update_fields:
             return {"status": False, "error": "No changes provided"}
@@ -162,11 +165,11 @@ class usersOperation:
         if "password" in update_fields:
             update_fields["password"] = passwordManager.hash(update_fields.pop("password"))
 
-        if 'relative_expire_date' in update_fields and update_fields['relative_expire_date'] == '':
+        if 'relative_expire_date' in update_fields and (update_fields['relative_expire_date'] == '' or user_old_data.first_login == "-1"):
             update_fields['relative_expire_date'] = "-1"
         if 'first_login' in update_fields and update_fields['first_login'] == '':
             update_fields['first_login'] = "-1"
-
+        print(update_fields)
         update_query = (
             sa.update(User)
             .where(User.username == username)
