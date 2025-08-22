@@ -114,7 +114,7 @@ class usersOperation:
     async def calculateUserExpireDate(self,user,route="NOTSET"):
         if user.first_login == "-1":
             user.relative_expire_date = "-1"
-        else:
+        elif (user.relative_expire_date == "-1" or user.relative_expire_date == ""):
             try:
                 first_login_date = datetime.strptime(user.first_login, "%Y-%m-%d")
 
@@ -161,6 +161,11 @@ class usersOperation:
 
         if "password" in update_fields:
             update_fields["password"] = passwordManager.hash(update_fields.pop("password"))
+
+        if 'relative_expire_date' in update_fields and update_fields['relative_expire_date'] == '':
+            update_fields['relative_expire_date'] = "-1"
+        if 'first_login' in update_fields and update_fields['first_login'] == '':
+            update_fields['first_login'] = "-1"
 
         update_query = (
             sa.update(User)
