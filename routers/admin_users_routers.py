@@ -49,16 +49,13 @@ async def update_username(db_session: Annotated[AsyncSession, Depends(get_db)],
     return user
 @admin_user_routers.put("/used_traffic/")
 async def used_traffic(db_session: Annotated[AsyncSession, Depends(get_db)],
-                   auth_token: Annotated[str, Header()],
-                   username: str,
-                   traffic: float,
-                   tokenData: JWTPayload = Depends(JWTHandler.verify_token)
-                   ):
-    await usersOperation(db_session).used_traffic(
-        username=username,
-        traffic=traffic,
-        route="/usedTraffic"
-    )
+                          auth_token: Annotated[str, Header()],
+                          request: Request,
+                          username:str = Body(),
+                          traffic :float =Body()
+                          ):
+    user = await usersOperation(db_session).used_traffic(username, traffic, "/used_traffic")
+    return user
 @admin_user_routers.delete("/delete_user")
 async def deleteUserByUsername(
         db_session: Annotated[AsyncSession, Depends(get_db)],
